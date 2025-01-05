@@ -1,64 +1,36 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ItemProduct from '../Product/ItemProduct';
 import Menu from './../../components/Menu/Menu';
+import { getAllProduct } from '../../services/productService';
+
 function Home() {
     const [selectedMenu, setSelectedMenu] = useState('home');
-    const handleMenuChange = (item) => {
-        setSelectedMenu(item);
-    };
-    console.log('kk', selectedMenu);
-    const dataProduct = [
-        {
-            id: 1,
-            name: 'Iphone 15 Pro Max (256GB)- Chính hãng VN/A',
-            image: 'https://cdn.hoanghamobile.com/i/preview/Uploads/2023/09/13/iphone-15-blue-pure-back-iphone-15-blue-pure-front-2up-screen-usen.png',
-        },
-        {
-            id: 2,
-            name: 'Iphone14',
-            image: 'https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/c/3/c3845789-dda7-44d7-a9eb-bb8e775c9ffb.png',
-        },
-        {
-            id: 3,
-            name: 'Iphone15',
-            image: 'https://cdn.hoanghamobile.com/i/preview/Uploads/2023/09/13/iphone-15-blue-pure-back-iphone-15-blue-pure-front-2up-screen-usen.png',
-        },
-        {
-            id: 4,
-            name: 'Iphone14',
-            image: 'https://cdn.hoanghamobile.com/i/preview/Uploads/2023/09/13/iphone-15-blue-pure-back-iphone-15-blue-pure-front-2up-screen-usen.png',
-        },
-        {
-            id: 5,
-            name: 'Iphone15',
-            image: 'https://cdn.hoanghamobile.com/i/preview/Uploads/2023/09/13/iphone-15-blue-pure-back-iphone-15-blue-pure-front-2up-screen-usen.png',
-        },
-        {
-            id: 6,
-            name: 'Iphone14',
-            image: 'https://cdn.hoanghamobile.com/i/preview/Uploads/2023/09/13/iphone-15-blue-pure-back-iphone-15-blue-pure-front-2up-screen-usen.png',
-        },
-        {
-            id: 7,
-            name: 'Iphone15',
-            image: 'https://cdn.hoanghamobile.com/i/preview/Uploads/2023/09/13/iphone-15-blue-pure-back-iphone-15-blue-pure-front-2up-screen-usen.png',
-        },
-        {
-            id: 8,
-            name: 'Iphone14',
-            image: 'https://cdn.hoanghamobile.com/i/preview/Uploads/2023/09/13/iphone-15-blue-pure-back-iphone-15-blue-pure-front-2up-screen-usen.png',
-        },
-    ];
+    const [dataProduct, setDataProduct] = useState([]);
+
+    useEffect(() => {
+        const getProducts = async () => {
+            let products = await getAllProduct();
+            console.log('oopp', products);
+
+            setDataProduct(products); // Kiểm tra xem có phải là mảng không
+        };
+        getProducts();
+        console.log(dataProduct);
+    }, []);
 
     return (
-        <div>
-            <div className="w-full flex flex-wrap">
-                {dataProduct.map((item) => (
-                    <div className="w-1/6 mt-5 p-1" key={item.id}>
-                        <ItemProduct data={item} />
-                    </div>
-                ))}
-            </div>
+        <div className="container mx-auto px-4 mt-10">
+            {dataProduct && dataProduct.length > 0 ? ( // Kiểm tra mảng có dữ liệu không
+                <div className="flex flex-wrap -mx-2">
+                    {dataProduct.map((item) => (
+                        <div className="w-full md:w-1/6  px-2 mb-4" key={item.id}>
+                            <ItemProduct data={item} />
+                        </div>
+                    ))}
+                </div>
+            ) : (
+                <p>Không có sản phẩm nào.</p> // Thông báo khi không có sản phẩm
+            )}
         </div>
     );
 }

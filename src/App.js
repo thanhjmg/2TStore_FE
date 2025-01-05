@@ -13,8 +13,7 @@ function App() {
                     else if (route.layout === null) {
                         Layout = Fragment;
                     }
-                    const Page = route.component;
-
+                    const Page = route.element;
                     return (
                         <Route
                             key={index}
@@ -27,7 +26,6 @@ function App() {
                         />
                     );
                 })}
-                {/* <Route path="*" element={<Page404 />} /> */}
             </Routes>
         </Router>
     );

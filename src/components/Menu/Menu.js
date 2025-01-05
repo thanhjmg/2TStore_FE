@@ -9,18 +9,17 @@ const cx = classNames.bind();
 function Menu({ onSelect }) {
     const navigate = useNavigate();
     const [hoveredItem, setHoveredItem] = useState(null);
-    const [selectedItem, setSelectedItem] = useState(null); // State cho item được chọn
+    const [selectedItem, setSelectedItem] = useState(0); // State cho item được chọn
 
     const menuItems = [
         {
-            label: 'Laptop',
+            label: 'Trang chủ',
             route: config.routeConfig.home,
             subItems: [],
-            icon: <FaLaptop />,
         },
         {
-            label: 'Iphone',
-            icon: <FaMobileAlt />,
+            label: 'Sản phẩm',
+
             subItems: [
                 { label: 'iPhone 11', route: config.routeConfig.iphone11 },
                 { label: 'iPhone 12', route: config.routeConfig.iphone12 },
@@ -29,16 +28,19 @@ function Menu({ onSelect }) {
             ],
         },
         {
-            label: 'Đồng hồ',
+            label: 'Khuyến mãi',
             route: config.routeConfig.home,
             subItems: [],
-            icon: <FaClock />,
         },
         {
-            label: 'Âm thanh',
+            label: 'Giới thiệu',
             route: config.routeConfig.home,
             subItems: [],
-            icon: <FaHeadphones />,
+        },
+        {
+            label: 'Liên hệ',
+            route: config.routeConfig.home,
+            subItems: [],
         },
     ];
 
@@ -49,7 +51,7 @@ function Menu({ onSelect }) {
     };
 
     return (
-        <nav className={cx('bg-green-900 shadow-md')}>
+        <nav className={cx('bg-red-900 shadow-md')}>
             <ul className={cx('flex flex-row p-1 justify-center')}>
                 {menuItems.map((item, index) => (
                     <li
@@ -59,7 +61,9 @@ function Menu({ onSelect }) {
                         onMouseLeave={() => setHoveredItem(null)}
                     >
                         <div
-                            className={cx('cursor-pointer text-white', { 'font-bold': selectedItem === index })}
+                            className={cx('cursor-pointer text-white', {
+                                'font-bold border-b-2': selectedItem === index,
+                            })}
                             onClick={() => handleItemClick(index, item.route)}
                         >
                             <div className="flex justify-center text-2xl">{item.icon}</div>
