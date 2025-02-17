@@ -10,7 +10,6 @@ function Home() {
     useEffect(() => {
         const getProducts = async () => {
             let products = await getAllProduct();
-            console.log('oopp', products);
 
             setDataProduct(products); // Kiểm tra xem có phải là mảng không
         };

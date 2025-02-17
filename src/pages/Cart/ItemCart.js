@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
+import { FaTrash } from 'react-icons/fa';
 
-export default function ItemCart({ data, isSelected, onCheckboxChange }) {
-    const [quantity, setQuantity] = useState(1);
+export default function ItemCart({ data, isSelected, onRemove, onCheckboxChange }) {
+    const [quantity, setQuantity] = useState(data.quantity);
+    console.log('iii', data);
+
     const handleCheckboxChange = (e) => {
         onCheckboxChange(data.id);
     };
 
     const increaseQuantity = () => {
+        console.log(quantity);
+
         setQuantity((prevQuantity) => prevQuantity + 1);
     };
 
@@ -27,32 +32,45 @@ export default function ItemCart({ data, isSelected, onCheckboxChange }) {
     };
     return (
         <div>
-            <div className="w-full h-30 border rounded flex">
-                <input type="checkbox" className="mx-2 w-5" checked={isSelected} onChange={handleCheckboxChange} />
-                <img
-                    src="https://cdn.hoanghamobile.com/i/preview/Uploads/2023/09/13/iphone-15-blue-pure-back-iphone-15-blue-pure-front-2up-screen-usen.png"
-                    className="h-32 object-cover rounded"
-                    alt="iPhone 15"
-                />
-                <div className="p-2">
-                    <div className="text-xl font-bold ">Điện thoại iPhone 11 (64GB) - Chính hãng VN/A</div>
-                    <div className="text-lg text-red-500 font-semibold">{formatCurrency(data.price)}</div>
-                    <div className="flex items-center mt-2">
-                        <button
-                            onClick={decreaseQuantity}
-                            className="w-5 h-5 border rounded bg-gray-200 flex justify-center items-center"
-                        >
-                            <p className="font-bold flex justify-center items-center">-</p>
-                        </button>
-                        <span className="mx-2">{quantity}</span>
-                        <button
-                            onClick={increaseQuantity}
-                            className="w-5 h-5 border rounded bg-gray-200 flex justify-center items-center"
-                        >
-                            <p className="font-bold flex justify-center items-center">+</p>
-                        </button>
+            <div className="w-full h-36 border rounded flex">
+                <div className="flex w-full  items-center">
+                    <input
+                        type="checkbox"
+                        className="w-10 size-5"
+                        checked={isSelected}
+                        onChange={handleCheckboxChange}
+                    />
+                    <img
+                        src={data.ProductDetail.Product.Images[0].url}
+                        className="h-28 object-cover rounded"
+                        alt={data.ProductDetail.Product.name}
+                    />
+                    <div className="p-10">
+                        <div className="text-sm font-bold ">{data.ProductDetail.Product.name}</div>
+                        <div className="text-sm">Size: {data.ProductDetail.Size.sizeName}</div>
+                        <div className="text-lg text-red-500 font-semibold">
+                            {formatCurrency(data.ProductDetail.selling_price)}
+                        </div>
+                        <div className="flex items-center mt-2">
+                            <button
+                                onClick={decreaseQuantity}
+                                className="w-5 h-5 border rounded bg-gray-200 flex justify-center items-center"
+                            >
+                                <p className="font-bold flex justify-center items-center">-</p>
+                            </button>
+                            <span className="mx-2">{quantity}</span>
+                            <button
+                                onClick={increaseQuantity}
+                                className="w-5 h-5 border rounded bg-gray-200 flex justify-center items-center"
+                            >
+                                <p className="font-bold flex justify-center items-center">+</p>
+                            </button>
+                        </div>
                     </div>
                 </div>
+                <button className=" mt-3 mr-3 h-10 text-gray-500 hover:text-red-500" onClick={() => onRemove(data.id)}>
+                    <FaTrash size={20} className="" />
+                </button>
             </div>
         </div>
     );

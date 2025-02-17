@@ -4,6 +4,7 @@ import ProductDetail from '../pages/Product/ProductDetail';
 import GioHang from '../pages/Cart/Cart';
 import Login from '../pages/Login/Login';
 import SignUp from '../pages/SignUp/SignUp';
+import Product from '../pages/Product/Product';
 import { LoginLayout } from '../layout';
 
 const publicRoutes = [
@@ -15,6 +16,18 @@ const publicRoutes = [
     {
         path: routeConfig.routeConfig.productDetail,
         element: ProductDetail,
+    },
+    {
+        path: routeConfig.routeConfig.product,
+        element: Product,
+    },
+    {
+        path: routeConfig.routeConfig.productType,
+        element: Product,
+    },
+    {
+        path: routeConfig.routeConfig.productBrand,
+        element: Product,
     },
     {
         path: routeConfig.routeConfig.gioHang,

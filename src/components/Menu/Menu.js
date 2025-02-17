@@ -1,36 +1,59 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
 import { FaLaptop, FaMobileAlt, FaClock, FaHeadphones } from 'react-icons/fa';
 import config from '../../configRoutes';
+import { getProductType } from '../../services/productService';
+import { getAllBrand } from '../../services/brandService';
 
 const cx = classNames.bind();
 
 function Menu({ onSelect }) {
     const navigate = useNavigate();
     const [hoveredItem, setHoveredItem] = useState(null);
-    const [selectedItem, setSelectedItem] = useState(0); // State cho item được chọn
+    const [selectedItem, setSelectedItem] = useState(0);
+    const [productType, setProductType] = useState();
+    const [brand, setBrand] = useState([]);
+
+    const fetchProductType = async () => {
+        const productTypes = await getProductType();
+        setProductType(
+            productTypes?.map((proType) => ({
+                ...proType,
+                route: `/san-pham/${proType.slug}`, // Thêm route dựa vào id
+            })),
+        );
+    };
+    const fetchBrand = async () => {
+        const brands = await getAllBrand();
+        setBrand(
+            brands?.map((br) => ({
+                ...br,
+                route: `/san-pham/brand/${br.slug}`, // Thêm route dựa vào id
+            })),
+        );
+    };
+    useEffect(() => {
+        fetchProductType();
+        fetchBrand();
+    }, []);
+    console.log('lll', productType);
 
     const menuItems = [
         {
-            label: 'Trang chủ',
+            label: 'TRANG CHỦ',
             route: config.routeConfig.home,
             subItems: [],
         },
         {
-            label: 'Sản phẩm',
+            label: 'GIÀY ĐÁ BÓNG',
 
-            subItems: [
-                { label: 'iPhone 11', route: config.routeConfig.iphone11 },
-                { label: 'iPhone 12', route: config.routeConfig.iphone12 },
-                { label: 'iPhone 13', route: config.routeConfig.iphone13 },
-                { label: 'iPhone 14', route: config.routeConfig.iphone14 },
-            ],
+            subItems: productType ? productType : [],
         },
         {
-            label: 'Khuyến mãi',
+            label: 'THƯƠNG HIỆU',
             route: config.routeConfig.home,
-            subItems: [],
+            subItems: brand ? brand : [],
         },
         {
             label: 'Giới thiệu',
@@ -51,34 +74,48 @@ function Menu({ onSelect }) {
     };
 
     return (
-        <nav className={cx('bg-red-900 shadow-md')}>
-            <ul className={cx('flex flex-row p-1 justify-center')}>
+        <nav className={cx('bg-red-900 h-14')}>
+            <ul className={cx('flex w-full h-full items-center justify-center')}>
                 {menuItems.map((item, index) => (
                     <li
                         key={index}
-                        className="relative  flex w-full justify-center mx-4"
-                        onMouseEnter={() => setHoveredItem(index)}
-                        onMouseLeave={() => setHoveredItem(null)}
+                        className="w-full h-full flex justify-center mx-4 "
+                        onMouseEnter={() => {
+                            setSelectedItem(index);
+                            setHoveredItem(index);
+                        }}
+                        onMouseLeave={() => {
+                            setSelectedItem(null);
+                            setHoveredItem(null);
+                        }}
                     >
                         <div
-                            className={cx('cursor-pointer text-white', {
-                                'font-bold border-b-2': selectedItem === index,
-                            })}
+                            className={cx(
+                                'cursor-pointer text-lg font-bold  text-white flex items-center hover:text-yellow-600 ',
+                                {
+                                    'font-bold text-yellow-600': selectedItem === index || hoveredItem === index,
+                                },
+                            )}
                             onClick={() => handleItemClick(index, item.route)}
                         >
-                            <div className="flex justify-center text-2xl">{item.icon}</div>
                             {item.label}
                         </div>
 
                         {item.subItems.length > 0 && hoveredItem === index && (
-                            <ul className={cx('absolute mr-1 mt-10 w-48 bg-white shadow-md')}>
+                            <ul className={cx('absolute ml-20 mt-14 w-48 bg-white shadow-md')}>
+                                <li
+                                    className="p-2 cursor-pointer hover:bg-yellow-600"
+                                    onClick={() => navigate(config.routeConfig.product)}
+                                >
+                                    Tất cả sản phẩm
+                                </li>
                                 {item.subItems.map((subItem, subIndex) => (
                                     <li
                                         key={subIndex}
-                                        className="p-2 cursor-pointer hover:bg-gray-100"
+                                        className="p-2 cursor-pointer hover:bg-yellow-600"
                                         onClick={() => navigate(subItem.route)}
                                     >
-                                        {subItem.label}
+                                        {subItem.name}
                                     </li>
                                 ))}
                             </ul>

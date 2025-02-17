@@ -5,23 +5,37 @@ import ItemProductType from './ItemProductType';
 import { FaCartArrowDown } from 'react-icons/fa';
 import { useParams } from 'react-router-dom';
 import { getProductBySlug } from '../../services/productService';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { getCartByUserId, addProductToCart } from '../../services/cartService';
 import config from '../../configRoutes';
+import { getAxiosJWT } from '~/utils/httpConfigRefreshToken';
 
 function ProductDetail() {
+    const dispatch = useDispatch();
     const { name } = useParams();
     const [dataProduct, setDataProduct] = useState(null); // Bắt đầu từ null để phân biệt với array
     const [isLoading, setIsLoading] = useState(true); // Trạng thái loading
+    const [productDetailId, setProductDetailId] = useState(null);
+    const [carrId, setCartId] = useState(null);
     const userLoginData = useSelector((state) => state.persistedReducer.auth.currentUser);
     const navigate = useNavigate();
+    const accessToken = userLoginData?.accessToken || '';
+    const axiosJWT = getAxiosJWT(dispatch, userLoginData);
+
+    useEffect(() => {
+        const fetchCartData = async () => {
+            const cart = await getCartByUserId(userLoginData?.customerId, accessToken, axiosJWT);
+            setCartId(cart.id);
+        };
+        fetchCartData();
+    }, []);
 
     useEffect(() => {
         const getProducts = async () => {
             try {
                 const product = await getProductBySlug(name);
                 setDataProduct(product);
-                console.log('lll:', product);
             } catch (error) {
                 console.error('Error fetching product by slug:', error);
             } finally {
@@ -33,29 +47,40 @@ function ProductDetail() {
 
     const slideRef = useRef(null);
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [selectedItem, setSelectedItem] = useState(null);
 
     const handleImageClick = (index) => {
         setCurrentIndex(index);
         slideRef.current.goTo(index);
     };
 
-    const handleAddToCart = (dataProduct, selectedItem) => {
+    const handleAddToCart = async (cartId, productDetailId, quantity = 1) => {
         if (!userLoginData) {
-            navigate(config.routeConfig.login);
+            navigate(config.routeConfig.login); // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
         } else {
-            if (!selectedItem) {
+            if (!productDetailId) {
                 alert('Bạn chưa chọn Size cho sản phẩm!!');
             } else {
-                console.log('User:', userLoginData);
+                try {
+                    const response = await addProductToCart(quantity, productDetailId, cartId, accessToken, axiosJWT);
+                    console.log('ppp', response);
+
+                    if (response) {
+                        alert('Sản phẩm đã được thêm vào giỏ hàng!');
+                    } else {
+                        alert('Có lỗi xảy ra, vui lòng thử lại.');
+                    }
+                } catch (error) {
+                    console.error('Thêm vào giỏ hàng thất bại:', error.message);
+                    alert('Lỗi khi thêm vào giỏ hàng.');
+                }
             }
         }
-        console.log('111:', selectedItem);
+        console.log('111:', productDetailId);
     };
 
     const handleItemClick = (item) => {
-        setSelectedItem(item.id);
-        console.log('Selected item:', item);
+        setProductDetailId(item.id);
+        console.log('Selected item:', item.id);
     };
 
     const formatCurrency = (value) => {
@@ -121,7 +146,7 @@ function ProductDetail() {
                                         <ItemProductType
                                             dataType={item}
                                             onClick={() => handleItemClick(item)}
-                                            isSelected={selectedItem === item.id}
+                                            isSelected={productDetailId === item.id}
                                         />
                                     </div>
                                 ))}
@@ -134,7 +159,7 @@ function ProductDetail() {
 
                                     <button
                                         className="bg-orange-500 w-full h-14 ml-2.5 justify-center text-white text-lg font-bold rounded hover:bg-orange-700 flex items-center"
-                                        onClick={() => handleAddToCart(dataProduct, selectedItem)}
+                                        onClick={() => handleAddToCart(carrId, productDetailId)}
                                     >
                                         <FaCartArrowDown className="mr-2" size={30} />
                                         Thêm giỏ hàng
