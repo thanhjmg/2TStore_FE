@@ -54,15 +54,15 @@ export default function SignUp() {
     };
 
     return (
-        <div className="flex justify-center w-full h-auto">
+        <div className="flex justify-end text-white w-full h-auto">
             <div className="w-4/12 border flex justify-center rounded  h-auto">
-                <div className="w-full p-5">
-                    <p className="text-2xl flex justify-center font-bold text-black">Đăng ký</p>
+                <div className="w-full p-5 text-white">
+                    <p className="text-2xl flex justify-center font-bold ">Đăng ký</p>
                     <div className="w-full">
                         <div>Email:</div>
                         <input
                             type="text"
-                            className="block p-2 pl-2  caret-lcn-blue-4 text-sm w-full rounded bg-transparent border border-lcn-blue-4 outline-none placeholder:text-lcn-placeholder"
+                            className="block p-2 pl-2 text-white text-sm w-full rounded bg-transparent border border-lcn-blue-4 outline-none placeholder:text-lcn-placeholder"
                             placeholder="Email"
                             onChange={(e) => setEmail(e.target.value)}
                         />
@@ -71,7 +71,7 @@ export default function SignUp() {
                         <div>Họ và tên:</div>
                         <input
                             type="text"
-                            className="block p-2 pl-2  caret-lcn-blue-4 text-sm w-full rounded bg-transparent border border-lcn-blue-4 outline-none placeholder:text-lcn-placeholder"
+                            className="block p-2 pl-2 text-white caret-lcn-blue-4 text-sm w-full rounded bg-transparent border border-lcn-blue-4 outline-none placeholder:text-lcn-placeholder"
                             placeholder="Tên người dùng"
                             onChange={(e) => setFullName(e.target.value)}
                         />
@@ -80,7 +80,7 @@ export default function SignUp() {
                         <div>Mật khẩu:</div>
                         <input
                             type="password"
-                            className="block p-2 pl-2  caret-lcn-blue-4 text-sm w-full rounded bg-transparent border border-lcn-blue-4 outline-none placeholder:text-lcn-placeholder"
+                            className="block p-2 pl-2 text-white caret-lcn-blue-4 text-sm w-full rounded bg-transparent border border-lcn-blue-4 outline-none placeholder:text-lcn-placeholder"
                             placeholder="Mật khẩu"
                             onChange={(e) => setPassword(e.target.value)}
                         />
@@ -89,7 +89,7 @@ export default function SignUp() {
                         <div>Nhập lại mật khẩu:</div>
                         <input
                             type="password"
-                            className="block p-2 pl-2  caret-lcn-blue-4 text-sm w-full rounded bg-transparent border border-lcn-blue-4 outline-none placeholder:text-lcn-placeholder"
+                            className="block p-2 pl-2 text-white caret-lcn-blue-4 text-sm w-full rounded bg-transparent border border-lcn-blue-4 outline-none placeholder:text-lcn-placeholder"
                             placeholder="Nhập lại mật khẩu"
                             onChange={(e) => setConfirmPassword(e.target.value)}
                         />

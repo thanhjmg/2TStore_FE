@@ -5,12 +5,18 @@ import GioHang from '../pages/Cart/Cart';
 import Login from '../pages/Login/Login';
 import SignUp from '../pages/SignUp/SignUp';
 import Product from '../pages/Product/Product';
+import CheckOut from '../pages/CheckOut';
 import { LoginLayout } from '../layout';
 
 const publicRoutes = [
     {
         path: routeConfig.routeConfig.home,
         element: Home,
+    },
+    {
+        path: routeConfig.routeConfig.checkout,
+        element: CheckOut,
+        layout: LoginLayout,
     },
 
     {

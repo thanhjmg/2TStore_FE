@@ -8,6 +8,7 @@ const productType = '/san-pham/:typeName';
 const gioHang = '/gio-hang';
 const login = '/dang-nhap';
 const signup = '/dang-ky';
+const checkout = '/checkout';
 // level 2
 
 const routes = {
@@ -20,5 +21,6 @@ const routes = {
     product: product,
     productType: productType,
     productBrand: productBrand,
+    checkout: checkout,
 };
 export default routes;

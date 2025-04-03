@@ -2,15 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { FaArrowLeft } from 'react-icons/fa';
 import ItemCart from './ItemCart';
 import { useSelector, useDispatch } from 'react-redux';
-import { getCartByUserId, deleteItemCart } from '../../services/cartService';
+import { getCartByUserId, deleteItemCart, updateQuantityItem } from '../../services/cartService';
 import { getAxiosJWT } from '~/utils/httpConfigRefreshToken';
+import { useNavigate, useLocation } from 'react-router-dom';
+import config from '../../configRoutes';
 
 export default function Cart() {
     const dispatch = useDispatch();
     const userLoginData = useSelector((state) => state.persistedReducer.auth.currentUser);
     const accessToken = userLoginData?.accessToken || '';
     const axiosJWT = getAxiosJWT(dispatch, userLoginData);
-
+    const navigate = useNavigate();
     const [selectedItems, setSelectedItems] = useState([]);
     const [dataCart, setDataCart] = useState();
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -51,19 +53,43 @@ export default function Cart() {
         closeModal();
     };
 
-    // Xử lý chọn/bỏ chọn các mục trong giỏ hàng
-    const handleCheckboxChange = (itemId) => {
-        setSelectedItems((prevSelectedItems) =>
-            prevSelectedItems.includes(itemId)
-                ? prevSelectedItems.filter((id) => id !== itemId)
-                : [...prevSelectedItems, itemId],
-        );
+    const onQuantityChange = (id, quantity) => {
+        console.log('id:', id, quantity);
+
+        clearTimeout(window.cartUpdateTimeout);
+        window.cartUpdateTimeout = setTimeout(async () => {
+            await updateQuantityItem(id, quantity, accessToken, axiosJWT);
+        }, 500);
+    };
+
+    const handleCheckboxChange = (product, quantity) => {
+        setSelectedItems((prevSelected) => {
+            const isSelected = prevSelected.some((item) => item.id === product.id); // Kiểm tra ID có trong danh sách chưa
+
+            if (isSelected) {
+                return prevSelected.filter((item) => item.id !== product.id);
+            } else {
+                return [...prevSelected, { id: product.id, quantity }];
+            }
+        });
+    };
+
+    const handleCheckout = () => {
+        if (!selectedItems) {
+            alert('Bạn chưa chọn Size cho sản phẩm!!');
+        } else {
+            navigate(config.routeConfig.checkout, {
+                state: {
+                    selectedProduct: Array.isArray(selectedItems) ? selectedItems : [selectedItems],
+                },
+            });
+        }
     };
 
     return (
         <div className="w-full flex justify-center items-center">
             <div className="w-8/12 mt-5">
-                <div className="flex text-lg items-center mb-4">
+                <div className="flex text-lg items-center mb-4" onClick={() => navigate(config.routeConfig.home)}>
                     <FaArrowLeft />
                     <p className="ml-2">Giỏ hàng của bạn</p>
                 </div>
@@ -78,7 +104,10 @@ export default function Cart() {
                                             data={item}
                                             onRemove={openDeleteModal}
                                             onCheckboxChange={handleCheckboxChange}
-                                            isSelected={selectedItems.includes(item.id)}
+                                            onQuantityChange={onQuantityChange}
+                                            isSelected={selectedItems.some(
+                                                (selected) => selected.id === item.Product.ProductDetails[0].id,
+                                            )}
                                         />
                                     </div>
                                 ))}
@@ -105,7 +134,10 @@ export default function Cart() {
                     </div>
                 )}
                 <div className="fixed bottom-0 w-8/12 flex justify-center">
-                    <button className="bg-red-500 w-8/12 h-14 text-white text-lg font-bold rounded hover:bg-red-700 flex items-center justify-center">
+                    <button
+                        className="bg-red-500 w-8/12 h-14 text-white text-lg font-bold rounded hover:bg-red-700 flex items-center justify-center"
+                        onClick={handleCheckout}
+                    >
                         Thanh toán ngay
                     </button>
                 </div>

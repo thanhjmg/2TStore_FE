@@ -1,25 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaTrash } from 'react-icons/fa';
 
-export default function ItemCart({ data, isSelected, onRemove, onCheckboxChange }) {
+export default function ItemCart({ data, isSelected, onRemove, onCheckboxChange, onQuantityChange }) {
     const [quantity, setQuantity] = useState(data.quantity);
-    console.log('iii', data);
+    console.log('data:', data);
 
     const handleCheckboxChange = (e) => {
-        onCheckboxChange(data.id);
+        onCheckboxChange(data.Product.ProductDetails[0], quantity);
     };
+    useEffect(() => {
+        onQuantityChange(data.id, quantity);
+    }, [quantity]);
 
-    const increaseQuantity = () => {
-        console.log(quantity);
-
-        setQuantity((prevQuantity) => prevQuantity + 1);
-    };
-
-    const decreaseQuantity = () => {
-        if (quantity > 1) {
-            setQuantity((prevQuantity) => prevQuantity - 1);
-        }
-    };
+    const increaseQuantity = () => setQuantity((prev) => prev + 1);
+    const decreaseQuantity = () => setQuantity((prev) => (prev > 1 ? prev - 1 : prev));
     const formatCurrency = (value) => {
         const formattedValue = new Intl.NumberFormat('vi-VN', {
             style: 'currency',
@@ -30,6 +24,7 @@ export default function ItemCart({ data, isSelected, onRemove, onCheckboxChange 
 
         return formattedValue;
     };
+
     return (
         <div>
             <div className="w-full h-36 border rounded flex">
@@ -41,15 +36,15 @@ export default function ItemCart({ data, isSelected, onRemove, onCheckboxChange 
                         onChange={handleCheckboxChange}
                     />
                     <img
-                        src={data.ProductDetail.Product.Images[0].url}
+                        src={data.Product?.Images[0].url}
                         className="h-28 object-cover rounded"
-                        alt={data.ProductDetail.Product.name}
+                        alt={data.Product.name}
                     />
                     <div className="p-10">
-                        <div className="text-sm font-bold ">{data.ProductDetail.Product.name}</div>
-                        <div className="text-sm">Size: {data.ProductDetail.Size.sizeName}</div>
+                        <div className="text-sm font-bold ">{data.Product.name}</div>
+                        <div className="text-sm">Size: {data.Size.sizeName}</div>
                         <div className="text-lg text-red-500 font-semibold">
-                            {formatCurrency(data.ProductDetail.selling_price)}
+                            {formatCurrency(data.Product.selling_price)}
                         </div>
                         <div className="flex items-center mt-2">
                             <button

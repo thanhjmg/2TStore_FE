@@ -9,29 +9,42 @@ import { BiSearch } from 'react-icons/bi';
 import { useState, useRef, useEffect } from 'react';
 import Menu from '../../components/Menu/Menu';
 import Footer from '../../components/Footer/Footer';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import ModalAccount from './ModalAccount';
+import ModalOrder from './ModalOrder';
+import { logOutSuccess } from '../../redux/Slice/authSlice';
 
 const cx = classNames.bind();
 
 function DefaultLayout({ children }) {
     const navigate = useNavigate();
     const location = useLocation();
-
+    const dispatch = useDispatch();
     const searchRef = useRef();
     const [selectedMenu, setSelectedMenu] = useState('home');
     const handleMenuChange = (item) => setSelectedMenu(item);
     const [isOpen, setIsOpen] = useState(false);
     const [isModalAccountOpen, setIsModalAccountOpen] = useState(false);
+    const [isModalOrder, setIsModalOrder] = useState(false);
     const userLoginData = useSelector((state) => state.persistedReducer.auth.currentUser);
 
     const toggleDropdown = () => {
         setIsOpen(!isOpen);
     };
+    const handleSearch = () => {
+        const keyword = searchRef.current.value.trim(); // Lấy từ khóa từ ô input
+        if (keyword.length > 0) {
+            navigate(`/san-pham?search=${encodeURIComponent(keyword)}`); // Chuyển hướng với query param
+        }
+    };
+    const handleLogout = () => {
+        dispatch(logOutSuccess(null));
+        setIsOpen(false);
+    };
 
     return (
         <div className={cx('h-screen flex flex-col')}>
-            <div className="fixed top-0 left-0 w-full z-20  bg-white shadow-md">
+            <div className="fixed top-0 left-0 w-full z-20 bg-white shadow-md">
                 <header className={cx('w-full flex flex-row justify-between items-center shadow-md ')}>
                     <nav className={cx('flex flex-row items-center justify-between w-full ml-5 mr-5')}>
                         <div className={cx('flex flex-row justify-between items-center cursor-pointer')}>
@@ -40,7 +53,7 @@ function DefaultLayout({ children }) {
 
                             <div
                                 className={cx(
-                                    'flex flex-row ml-3 justify-between pr-4 p-2 h-8  text-sm  md:w-96  border  placeholder:text-sv-placeholder placeholder:italic',
+                                    'flex flex-row ml-3 justify-between pr-4 p-2 h-10  text-sm  md:w-96  border  placeholder:text-sv-placeholder placeholder:italic',
                                 )}
                             >
                                 <input
@@ -49,7 +62,7 @@ function DefaultLayout({ children }) {
                                     placeholder="Tìm kiếm..."
                                     className={cx(' w-full outline-none placeholder-black')}
                                 />
-                                <BiSearch color="#000000" size={16} />
+                                <BiSearch color="#000000" size={16} onClick={() => handleSearch()} />
                             </div>
                         </div>
 
@@ -75,10 +88,16 @@ function DefaultLayout({ children }) {
                                                 >
                                                     Thông tin tài khoản
                                                 </li>
-                                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                                                <li
+                                                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                                    onClick={() => setIsModalOrder(true)}
+                                                >
                                                     Đơn hàng của bạn
                                                 </li>
-                                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                                                <li
+                                                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                                    onClick={() => handleLogout()}
+                                                >
                                                     Đăng xuất
                                                 </li>
                                             </ul>
@@ -99,8 +118,8 @@ function DefaultLayout({ children }) {
                 {location.pathname !== '/gio-hang' ? <Menu onSelect={handleMenuChange} /> : ''}
             </div>
             <div className={cx('flex flex-col w-full pt-28')}>
-                <div className={cx('h-full flex')}>
-                    <div className={cx('flex-1')}>{children}</div>
+                <div className={cx('h-full  flex')}>
+                    <div className={cx('flex-1 min-h-screen')}>{children}</div>
                 </div>
             </div>
             {location.pathname !== '/gio-hang' ? (
@@ -111,6 +130,7 @@ function DefaultLayout({ children }) {
                 ''
             )}
             <ModalAccount isOpen={isModalAccountOpen} onClose={() => setIsModalAccountOpen(false)} />
+            <ModalOrder isOpen={isModalOrder} onClose={() => setIsModalOrder(false)} />
         </div>
     );
 }

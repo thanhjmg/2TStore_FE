@@ -17,7 +17,7 @@ export default function ItemProductType({ dataType, onClick, isSelected }) {
     return (
         <div
             className={`w-20 flex text-center justify-center items-center  h-10 border-2 rounded ${
-                isSelected ? 'border-black' : ''
+                isSelected ? 'border-red-600' : ''
             }`}
             onClick={onClick}
         >

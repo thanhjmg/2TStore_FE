@@ -37,7 +37,6 @@ function Menu({ onSelect }) {
         fetchProductType();
         fetchBrand();
     }, []);
-    console.log('lll', productType);
 
     const menuItems = [
         {

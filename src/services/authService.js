@@ -9,7 +9,6 @@ export const loginUser = async (user, dispatch, navigate) => {
                 return false;
             }
         }
-        console.log('login', dataUser);
 
         // Dispatch action từ component thay vì sử dụng hook ở đây
         dispatch(loginSuccess(dataUser));
@@ -26,8 +25,6 @@ export const register = async (user, navigate, dispatch) => {
         // dispatch(userSignUp(null)); // xoa signUp
 
         if (!!res) {
-            console.log('reS', res);
-
             return res;
         }
         return true;

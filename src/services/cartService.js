@@ -15,13 +15,32 @@ export const getCartByUserId = async (userId, accessToken, axiosJWT) => {
     }
 };
 
-export const addProductToCart = async (quantity, productDetailId, cartId, accessToken, axiosJWT) => {
+export const updateQuantityItem = async (id, quantity, accessToken, axiosJWT) => {
+    try {
+        const res = await axiosJWT.put(
+            'cartitem/updatequantity/',
+            { id, quantity },
+            {
+                headers: { Authorization: `Bearer ${accessToken}` },
+            },
+        );
+
+        if (!!res) {
+            return res.data;
+        } else return null;
+    } catch (error) {
+        return null;
+    }
+};
+
+export const addProductToCart = async (quantity, productId, sizeId, cartId, accessToken, axiosJWT) => {
     try {
         const res = await axiosJWT.post(
             'cart/addProduct',
             {
                 quantity,
-                productDetailId,
+                productId,
+                sizeId,
                 cartId,
             },
             { headers: { Authorization: `Bearer ${accessToken}` } },
@@ -41,7 +60,6 @@ export const deleteItemCart = async (id, accessToken, axiosJWT) => {
         });
 
         if (response.status === 200) {
-            console.log('Xóa thành công!');
             return response.data; // Trả về dữ liệu để xử lý tiếp
         }
     } catch (error) {
